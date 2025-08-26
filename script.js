@@ -468,46 +468,55 @@ function initYandexMap() {
         }
         
         // Проверяем, что API полностью загружен
-        if (typeof ymaps === 'undefined' || !ymaps.Map) {
-            console.error('API Яндекс.Карт не полностью загружен!');
+        if (typeof ymaps === 'undefined') {
+            console.error('API Яндекс.Карт не загружен!');
+            return;
+        }
+        
+        if (!ymaps.Map) {
+            console.error('Класс Map не найден в API!');
+            return;
+        }
+        
+        if (!ymaps.Placemark) {
+            console.error('Класс Placemark не найден в API!');
             return;
         }
         
         console.log('API Яндекс.Карт готов, создаем карту...');
         
         // Координаты трактира "Старая Школа" (Тихвинская ул., 3, корп. 1, Москва)
-        const traktirCoords = [55.785994, 37.600909];
+        // Точные координаты: 55.786192, 37.601103
+        const traktirCoords = [55.786192, 37.601103];
         
         console.log('Создаем карту с координатами:', traktirCoords);
         
-        // Создаем карту с дополнительными параметрами
+        // Создаем карту с базовыми параметрами
         const map = new ymaps.Map('yandex-map', {
             center: traktirCoords,
             zoom: 16,
-            controls: ['zoomControl', 'fullscreenControl'],
-            behaviors: ['drag', 'scrollZoom', 'dblClickZoom'],
-            type: 'yandex#map'
+            controls: ['zoomControl']
         });
-
-        // Ждем загрузки карты
-        map.events.add('load', function() {
-            console.log('Карта загружена, добавляем метку...');
+        
+        console.log('Карта создана, ждем загрузки...');
+        
+        // Ждем загрузки карты перед добавлением метки
+        setTimeout(() => {
+            console.log('Добавляем метку...');
             
-            // Создаем метку трактира
+            // Создаем простую метку трактира
             const placemark = new ymaps.Placemark(traktirCoords, {
                 balloonContentHeader: 'Трактир Старая Школа',
                 balloonContentBody: `
                     <div style="padding: 10px;">
                         <h4 style="margin: 0 0 10px 0; color: #d4af37;">Трактир Старая Школа</h4>
-                        <p style="margin: 5px 0;"><strong>Адрес:</strong> Тихвинская ул., 3, корп. 1</p>
+                        <p style="margin: 5px 0;"><strong>Адрес:</strong> Тихвинская ул., 3, корп. 1, Москва</p>
                         <p style="margin: 5px 0;"><strong>Телефон:</strong> +7 (999) 877-87-88</p>
                         <p style="margin: 5px 0;"><strong>Режим работы:</strong> 12:00 - 01:00</p>
-                        <p style="margin: 5px 0;"><strong>Метро:</strong> Менделеевская (640 м)</p>
                     </div>
                 `,
                 hintContent: 'Трактир Старая Школа'
             }, {
-                // Настройки метки - используем стандартную метку для надежности
                 preset: 'islands#redDotIcon',
                 iconColor: '#d4af37'
             });
@@ -515,72 +524,14 @@ function initYandexMap() {
             // Добавляем метку на карту
             map.geoObjects.add(placemark);
             
+            console.log('Метка добавлена на карту');
+            
             // Центрируем карту на метке
             map.setCenter(traktirCoords, 16);
             
             console.log('Метка трактира добавлена на координаты:', traktirCoords);
-
-            // Добавляем кнопку "Построить маршрут"
-            const routeButton = new ymaps.control.Button({
-                data: {
-                    content: 'Построить маршрут'
-                },
-                options: {
-                    selectOnClick: false
-                }
-            });
-
-            routeButton.events.add('click', function() {
-                // Открываем Яндекс.Навигатор с координатами трактира
-                const url = `https://yandex.ru/maps/?rtext=~${traktirCoords[0]},${traktirCoords[1]}&rtt=auto`;
-                window.open(url, '_blank');
-            });
-
-            map.controls.add(routeButton, {
-                float: 'right',
-                floatIndex: 0
-            });
-
-            // Адаптивность карты
-            map.container.fitToViewport();
-            
-            // Обработка изменения размера окна
-            window.addEventListener('resize', () => {
-                map.container.fitToViewport();
-            });
-
-            console.log('Яндекс.Карта успешно инициализирована с интерактивностью!');
-            
-            // Тестируем интерактивность
-            console.log('Тестируем интерактивность карты...');
-            console.log('Карта должна реагировать на клики, зум и перетаскивание');
-            
-            // Добавляем тестовые события для проверки интерактивности
-            map.events.add('click', function(e) {
-                console.log('Клик по карте:', e.get('coords'));
-            });
-            
-            map.events.add('boundschange', function(e) {
-                console.log('Изменение границ карты:', e.get('newBounds'));
-            });
-            
-            // Проверяем, что карта действительно интерактивна
-            setTimeout(() => {
-                console.log('Проверяем интерактивность карты...');
-                console.log('Состояние карты:', map.getState());
-                console.log('Элемент карты:', document.getElementById('yandex-map'));
-                console.log('Canvas элементы:', document.querySelectorAll('#yandex-map canvas'));
-            }, 2000);
-            
-        });
-
-        // Обработка ошибок загрузки карты
-        map.events.add('error', function(e) {
-            console.error('Ошибка загрузки карты:', e);
-        });
-
-        // Проверяем состояние карты
-        console.log('Состояние карты:', map.getState());
+            console.log('Яндекс.Карта успешно инициализирована!');
+        }, 1000);
         
     } catch (error) {
         console.error('Ошибка при инициализации карты:', error);

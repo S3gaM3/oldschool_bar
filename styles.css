@@ -1136,6 +1136,33 @@ section {
     pointer-events: auto !important;
 }
 
+/* Анимация для маркера на карте */
+@keyframes markerPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Применяем анимацию к маркеру */
+.ymaps-2-1-placemark-overlay {
+    animation: markerPulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+/* Дополнительные стили для маркера */
+.ymaps-2-1-placemark {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
 #yandex-map canvas {
     pointer-events: auto !important;
 }
