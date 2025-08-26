@@ -1,23 +1,19 @@
+# .htaccess для домена old-sc.ru
+# Трактир Старая Школа
+
 # Включаем модуль перезаписи
 RewriteEngine On
 
-# Принудительный HTTPS
+# Принудительно используем HTTPS
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Убираем www из URL
+# Убираем www из домена
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
-# Убираем trailing slash
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} (.+)/$
-RewriteRule ^ %1 [R=301,L]
-
-# Убираем расширение .html
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([^\.]+)$ $1.html [NC,L]
+# Перенаправляем на главную страницу
+DirectoryIndex index.html
 
 # Кэширование статических файлов
 <IfModule mod_expires.c>
@@ -30,30 +26,19 @@ RewriteRule ^([^\.]+)$ $1.html [NC,L]
     ExpiresByType image/png "access plus 1 month"
     ExpiresByType image/webp "access plus 1 month"
     ExpiresByType image/svg+xml "access plus 1 month"
-    ExpiresByType image/x-icon "access plus 1 year"
-    
-    # Видео
-    ExpiresByType video/mp4 "access plus 1 month"
-    ExpiresByType video/webm "access plus 1 month"
-    ExpiresByType video/ogg "access plus 1 month"
-    
-    # CSS, JavaScript
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
     
     # Шрифты
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
-    ExpiresByType application/font-woff "access plus 1 year"
-    ExpiresByType application/font-woff2 "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    
+    # CSS и JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
     
     # HTML
     ExpiresByType text/html "access plus 1 hour"
-    
-    # XML
-    ExpiresByType application/xml "access plus 1 hour"
-    ExpiresByType text/xml "access plus 1 hour"
 </IfModule>
 
 # Сжатие файлов
@@ -68,122 +53,45 @@ RewriteRule ^([^\.]+)$ $1.html [NC,L]
     AddOutputFilterByType DEFLATE application/javascript
     AddOutputFilterByType DEFLATE application/x-javascript
     AddOutputFilterByType DEFLATE application/json
-    AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
 
-# Заголовки безопасности
+# Безопасность
 <IfModule mod_headers.c>
     # Защита от XSS атак
     Header always set X-XSS-Protection "1; mode=block"
     
-    # Защита от MIME-sniffing
-    Header always set X-Content-Type-Options "nosniff"
-    
-    # Защита от clickjacking
+    # Запрет на встраивание в iframe
     Header always set X-Frame-Options "SAMEORIGIN"
     
-    # Защита от referrer leakage
+    # Защита от MIME-типов
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Реферер политика
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     
-    # Content Security Policy
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://mc.yandex.ru; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://mc.yandex.ru;"
-    
-    # HSTS (HTTP Strict Transport Security)
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    
-    # Заголовки для PWA
-    Header always set Service-Worker-Allowed "/"
-    
-    # Кэширование для статических файлов
-    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2)$">
-        Header set Cache-Control "public, max-age=31536000"
-    </FilesMatch>
-    
-    # Кэширование для HTML
-    <FilesMatch "\.(html|htm)$">
-        Header set Cache-Control "public, max-age=3600"
-    </FilesMatch>
+    # CSP (Content Security Policy)
+    Header always set Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; font-src 'self' data: https:;"
 </IfModule>
 
-# Защита от hotlinking изображений
+# Защита от хотлинкинга
 RewriteCond %{HTTP_REFERER} !^$
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?staraya-shkola\.ru [NC]
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?google\.com [NC]
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yandex\.ru [NC]
-RewriteCond %{HTTP_REFERER} !^https?://(www\.)?bing\.com [NC]
-RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?old-sc\.ru [NC]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?google\. [NC]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yandex\. [NC]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?bing\. [NC]
+RewriteRule \.(jpg|jpeg|png|gif|webp|css|js|woff|woff2|ttf|otf)$ - [F]
 
-# Защита от доступа к системным файлам
-<FilesMatch "^(\.htaccess|\.htpasswd|\.git|\.env|composer\.json|package\.json|README\.md|LICENSE)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Защита от доступа к файлам с определенными расширениями
-<FilesMatch "\.(log|sql|bak|old|tmp|temp)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Перенаправление ошибок
+# Обработка ошибок
 ErrorDocument 404 /index.html
 ErrorDocument 500 /index.html
 
-# Включаем Keep-Alive
-<IfModule mod_headers.c>
-    Header set Connection keep-alive
-</IfModule>
+# Запрет доступа к служебным файлам
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql|conf)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
 
-# Настройки для мобильных устройств
+# Запрет доступа к папкам
 <IfModule mod_rewrite.c>
-    # Определяем мобильные устройства
-    RewriteCond %{HTTP_USER_AGENT} (android|blackberry|iphone|ipad|ipod|iemobile|opera\ mobile|palmos|webos|googlebot-mobile) [NC]
-    RewriteRule ^$ / [L]
-</IfModule>
-
-# Настройки для социальных сетей
-<IfModule mod_rewrite.c>
-    # Facebook Open Graph
-    RewriteRule ^og-image$ /images/og-image.jpg [L]
-    
-    # Twitter Card
-    RewriteRule ^twitter-image$ /images/twitter-image.jpg [L]
-</IfModule>
-
-# Настройки для поисковых роботов
-<IfModule mod_rewrite.c>
-    # Yandex
-    RewriteCond %{HTTP_USER_AGENT} Yandex [NC]
-    RewriteRule ^$ / [L]
-    
-    # Google
-    RewriteCond %{HTTP_USER_AGENT} Googlebot [NC]
-    RewriteRule ^$ / [L]
-</IfModule>
-
-# Настройки для PWA
-<IfModule mod_rewrite.c>
-    # Service Worker
-    RewriteRule ^sw\.js$ /sw.js [L]
-    
-    # Manifest
-    RewriteRule ^manifest\.json$ /site.webmanifest [L]
-</IfModule>
-
-# Настройки для изображений
-<IfModule mod_rewrite.c>
-    # WebP поддержка
-    RewriteCond %{HTTP_ACCEPT} image/webp
-    RewriteCond %{REQUEST_FILENAME} (.*)\.(jpe?g|png)$
-    RewriteCond %{REQUEST_FILENAME}\.webp -f
-    RewriteRule (.+)\.(jpe?g|png)$ $1.webp [T=image/webp,E=accept:1]
-</IfModule>
-
-# Настройки для шрифтов
-<IfModule mod_rewrite.c>
-    # WOFF2 поддержка
-    RewriteCond %{HTTP_ACCEPT} application/font-woff2
-    RewriteCond %{REQUEST_FILENAME} (.*)\.woff$
-    RewriteCond %{REQUEST_FILENAME}2 -f
-    RewriteRule (.+)\.woff$ $1.woff2 [T=application/font-woff2,E=accept:1]
+    RewriteRule ^(assets/css|assets/js|assets/fonts)/ - [F]
 </IfModule>

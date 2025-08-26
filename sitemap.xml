@@ -1,150 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-    
-    <!-- Главная страница -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://staraya-shkola.ru/</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.0</priority>
-        <xhtml:link rel="alternate" hreflang="ru" href="https://staraya-shkola.ru/"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://staraya-shkola.ru/"/>
-    </url>
-    
-    <!-- Секция "О нас" -->
-    <url>
-        <loc>https://staraya-shkola.ru/#about</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- Секция "Меню" -->
-    <url>
-        <loc>https://staraya-shkola.ru/#menu</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.9</priority>
-    </url>
-    
-    <!-- Секция "Мероприятия" -->
-    <url>
-        <loc>https://staraya-shkola.ru/#events</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- Секция "Галерея" -->
-    <url>
-        <loc>https://staraya-shkola.ru/#gallery</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    
-    <!-- Секция "Бронирование" -->
-    <url>
-        <loc>https://staraya-shkola.ru/#reservation</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.9</priority>
-    </url>
-    
-    <!-- Секция "Контакты" -->
-    <url>
-        <loc>https://staraya-shkola.ru/#contact</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <!-- Основные файлы -->
-    <url>
-        <loc>https://staraya-shkola.ru/index.html</loc>
-        <lastmod>2024-12-20</lastmod>
+        <loc>https://old-sc.ru/</loc>
+        <lastmod>2024-12-19</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
-    
     <url>
-        <loc>https://staraya-shkola.ru/styles.css</loc>
-        <lastmod>2024-12-20</lastmod>
+        <loc>https://old-sc.ru/#menu</loc>
+        <lastmod>2024-12-19</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
+        <priority>0.8</priority>
     </url>
-    
     <url>
-        <loc>https://staraya-shkola.ru/script.js</loc>
-        <lastmod>2024-12-20</lastmod>
+        <loc>https://old-sc.ru/#gallery</loc>
+        <lastmod>2024-12-19</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.3</priority>
+        <priority>0.8</priority>
     </url>
-    
     <url>
-        <loc>https://staraya-shkola.ru/site.webmanifest</loc>
-        <lastmod>2024-12-20</lastmod>
+        <loc>https://old-sc.ru/#events</loc>
+        <lastmod>2024-12-19</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.2</priority>
+        <priority>0.8</priority>
     </url>
-    
-    <!-- Изображения для SEO -->
     <url>
-        <loc>https://staraya-shkola.ru/images/restaurant.jpg</loc>
-        <lastmod>2024-12-20</lastmod>
+        <loc>https://old-sc.ru/#contact</loc>
+        <lastmod>2024-12-19</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-        <image:image>
-            <image:loc>https://staraya-shkola.ru/images/restaurant.jpg</image:loc>
-            <image:title>Трактир Старая Школа - Интерьер</image:title>
-            <image:caption>Уютный интерьер трактира в стиле старой школы</image:caption>
-        </image:image>
+        <priority>0.9</priority>
     </url>
-    
-    <!-- Иконки -->
     <url>
-        <loc>https://staraya-shkola.ru/favicon.ico</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
+        <loc>https://old-sc.ru/#reservation</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
     </url>
-    
-    <url>
-        <loc>https://staraya-shkola.ru/favicon-16x16.png</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
-    </url>
-    
-    <url>
-        <loc>https://staraya-shkola.ru/favicon-32x32.png</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
-    </url>
-    
-    <url>
-        <loc>https://staraya-shkola.ru/apple-touch-icon.png</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
-    </url>
-    
-    <url>
-        <loc>https://staraya-shkola.ru/android-chrome-192x192.png</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
-    </url>
-    
-    <url>
-        <loc>https://staraya-shkola.ru/android-chrome-512x512.png</loc>
-        <lastmod>2024-12-20</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
-    </url>
-    
 </urlset>

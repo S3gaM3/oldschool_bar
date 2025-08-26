@@ -1,20 +1,21 @@
 User-agent: *
 Allow: /
 
+# Сайт: old-sc.ru
+# Трактир Старая Школа
+
 # Разрешаем индексацию всех страниц
-Allow: /index.html
-Allow: /styles.css
-Allow: /script.js
-Allow: /site.webmanifest
+Allow: /
 
 # Запрещаем индексацию служебных файлов
+Disallow: /assets/css/
+Disallow: /assets/js/
+Disallow: /assets/fonts/
+Disallow: /site.webmanifest
 Disallow: /sw.js
-Disallow: /.git/
-Disallow: /node_modules/
-Disallow: /README.md
 
-# Указываем расположение sitemap
-Sitemap: https://staraya-shkola.ru/sitemap.xml
+# Указываем главную страницу
+Sitemap: https://old-sc.ru/sitemap.xml
 
 # Время задержки между запросами (в секундах)
 Crawl-delay: 1

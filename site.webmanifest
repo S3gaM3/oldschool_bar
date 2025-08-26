@@ -1,61 +1,55 @@
 {
     "name": "Трактир Старая Школа",
     "short_name": "Старая Школа",
-    "description": "Уютный трактир с атмосферой старой школы. Русская кухня, еженедельные мероприятия, живая музыка.",
-    "start_url": "/",
+    "description": "Трактир Старая Школа - где традиции встречаются с современностью. Русская кухня, уютная атмосфера, мероприятия.",
+    "start_url": "https://old-sc.ru/",
     "display": "standalone",
     "background_color": "#0a0a0a",
     "theme_color": "#d4af37",
     "orientation": "portrait-primary",
-    "scope": "/",
+    "scope": "https://old-sc.ru/",
     "lang": "ru",
+    "dir": "ltr",
     "categories": ["food", "entertainment", "lifestyle"],
     "icons": [
         {
-            "src": "/favicon-16x16.png",
+            "src": "https://old-sc.ru/favicon-16x16.png",
             "sizes": "16x16",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         },
         {
-            "src": "/favicon-32x32.png",
+            "src": "https://old-sc.ru/favicon-32x32.png",
             "sizes": "32x32",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         },
         {
-            "src": "/apple-touch-icon.png",
+            "src": "https://old-sc.ru/apple-touch-icon.png",
             "sizes": "180x180",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         },
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "https://old-sc.ru/android-chrome-192x192.png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "https://old-sc.ru/android-chrome-512x512.png",
             "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         }
     ],
     "screenshots": [
         {
-            "src": "/screenshot-wide.png",
+            "src": "https://old-sc.ru/screenshot-wide.png",
             "sizes": "1280x720",
             "type": "image/png",
-            "form_factor": "wide",
-            "label": "Главная страница трактира"
+            "form_factor": "wide"
         },
         {
-            "src": "/screenshot-narrow.png",
+            "src": "https://old-sc.ru/screenshot-narrow.png",
             "sizes": "750x1334",
             "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Мобильная версия сайта"
+            "form_factor": "narrow"
         }
     ],
     "shortcuts": [
@@ -63,23 +57,23 @@
             "name": "Меню",
             "short_name": "Меню",
             "description": "Посмотреть меню трактира",
-            "url": "/#menu",
+            "url": "https://old-sc.ru/#menu",
             "icons": [
                 {
-                    "src": "/icon-menu.png",
-                    "sizes": "96x96"
+                    "src": "https://old-sc.ru/favicon-32x32.png",
+                    "sizes": "32x32"
                 }
             ]
         },
         {
             "name": "Бронирование",
-            "short_name": "Забронировать",
+            "short_name": "Бронировать",
             "description": "Забронировать столик",
-            "url": "/#reservation",
+            "url": "https://old-sc.ru/#reservation",
             "icons": [
                 {
-                    "src": "/icon-reservation.png",
-                    "sizes": "96x96"
+                    "src": "https://old-sc.ru/favicon-32x32.png",
+                    "sizes": "32x32"
                 }
             ]
         },
@@ -87,18 +81,13 @@
             "name": "Контакты",
             "short_name": "Контакты",
             "description": "Как нас найти",
-            "url": "/#contact",
+            "url": "https://old-sc.ru/#contact",
             "icons": [
                 {
-                    "src": "/icon-contact.png",
-                    "sizes": "96x96"
+                    "src": "https://old-sc.ru/favicon-32x32.png",
+                    "sizes": "32x32"
                 }
             ]
         }
-    ],
-    "related_applications": [],
-    "prefer_related_applications": false,
-    "edge_side_panel": {
-        "preferred_width": 400
-    }
+    ]
 }
