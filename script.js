@@ -19,31 +19,35 @@ function detectDevice() {
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-    
-    // Обновляем aria-expanded для доступности
-    const isExpanded = navMenu.classList.contains('active');
-    hamburger.setAttribute('aria-expanded', isExpanded);
-    
-    // Блокируем скролл при открытом меню
-    document.body.style.overflow = isExpanded ? 'hidden' : '';
-});
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        
+        // Обновляем aria-expanded для доступности
+        const isExpanded = navMenu.classList.contains('active');
+        hamburger.setAttribute('aria-expanded', isExpanded);
+        
+        // Блокируем скролл при открытом меню
+        document.body.style.overflow = isExpanded ? 'hidden' : '';
+    });
+}
 
 // Закрываем мобильное меню при клике на ссылку
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        hamburger.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
+        if (hamburger && navMenu) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
     });
 });
 
 // Закрываем мобильное меню при клике вне его
 document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+    if (hamburger && navMenu && !hamburger.contains(e.target) && !navMenu.contains(e.target)) {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
         hamburger.setAttribute('aria-expanded', 'false');
@@ -106,148 +110,81 @@ tabBtns.forEach(btn => {
     }
 });
 
-// Система рейтинга звёздами с улучшенной touch поддержкой
-const starInputs = document.querySelectorAll('.star-input');
+// Обработка формы бронирования
+const reservationForm = document.querySelector('.reservation-form');
 
-starInputs.forEach(input => {
-    input.addEventListener('change', function() {
-        const rating = this.value;
-        const starLabels = this.closest('.star-rating').querySelectorAll('.star-label');
-        
-        // Сбрасываем все звёзды
-        starLabels.forEach((label, index) => {
-            const star = label.querySelector('.star');
-            if (index < rating) {
-                star.style.color = '#ffd700';
-            } else {
-                star.style.color = '#e0e0e0';
-            }
-        });
-    });
-});
-
-// Hover эффект для звёзд с поддержкой touch
-const starLabels = document.querySelectorAll('.star-label');
-
-starLabels.forEach((label, index) => {
-    if (!isMobile) {
-        label.addEventListener('mouseenter', () => {
-            const stars = label.closest('.star-rating').querySelectorAll('.star');
-            stars.forEach((star, starIndex) => {
-                if (starIndex <= index) {
-                    star.style.color = '#ffd700';
-                }
-            });
-        });
-        
-        label.addEventListener('mouseleave', () => {
-            const stars = label.closest('.star-rating').querySelectorAll('.star');
-            const checkedInput = label.closest('.star-rating').querySelector('.star-input:checked');
-            const rating = checkedInput ? parseInt(checkedInput.value) : 0;
-            
-            stars.forEach((star, starIndex) => {
-                if (starIndex < rating) {
-                    star.style.color = '#ffd700';
-                } else {
-                    star.style.color = '#e0e0e0';
-                }
-            });
-        });
-    }
-    
-    // Touch поддержка для звёзд
-    if ('ontouchstart' in window) {
-        label.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const input = label.querySelector('.star-input');
-            if (input) {
-                input.checked = true;
-                input.dispatchEvent(new Event('change'));
-            }
-        });
-    }
-});
-
-// Обработка формы отзывов с улучшенной валидацией
-const reviewForm = document.querySelector('.review-form');
-
-if (reviewForm) {
-    reviewForm.addEventListener('submit', function(e) {
+if (reservationForm) {
+    reservationForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const formData = new FormData(this);
         const name = formData.get('name').trim();
-        const review = formData.get('review').trim();
-        const rating = formData.get('rating');
+        const phone = formData.get('phone').trim();
+        const date = formData.get('date');
+        const time = formData.get('time');
+        const guests = formData.get('guests');
+        const message = formData.get('message').trim();
         
-        // Улучшенная валидация
+        // Валидация формы
         if (!name || name.length < 2) {
             showNotification('Имя должно содержать минимум 2 символа', 'error');
             return;
         }
         
-        if (!review || review.length < 10) {
-            showNotification('Отзыв должен содержать минимум 10 символов', 'error');
+        if (!phone || phone.length < 10) {
+            showNotification('Введите корректный номер телефона', 'error');
             return;
         }
         
-        if (!rating) {
-            showNotification('Пожалуйста, поставьте оценку', 'error');
+        if (!date) {
+            showNotification('Выберите дату', 'error');
             return;
         }
         
-        // Создаём новый отзыв
-        createReview(name, review, rating);
+        if (!time) {
+            showNotification('Выберите время', 'error');
+            return;
+        }
         
-        // Очищаем форму
-        this.reset();
+        if (!guests) {
+            showNotification('Выберите количество гостей', 'error');
+            return;
+        }
         
-        // Сбрасываем звёзды
-        const stars = this.querySelectorAll('.star');
-        stars.forEach(star => {
-            star.style.color = '#e0e0e0';
-        });
+        // Проверяем, что выбранная дата не в прошлом
+        const selectedDate = new Date(date + ' ' + time);
+        const now = new Date();
         
-        showNotification('Спасибо за ваш отзыв!', 'success');
+        if (selectedDate < now) {
+            showNotification('Нельзя забронировать столик на прошедшее время', 'error');
+            return;
+        }
+        
+        // Имитация отправки формы
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Отправляем...';
+        
+        // Симуляция задержки
+        setTimeout(() => {
+            // Здесь должен быть реальный код отправки на сервер
+            console.log('Данные бронирования:', {
+                name, phone, date, time, guests, message
+            });
+            
+            // Показываем уведомление об успехе
+            showNotification('Столик успешно забронирован! Мы свяжемся с вами для подтверждения.', 'success');
+            
+            // Очищаем форму
+            this.reset();
+            
+            // Восстанавливаем кнопку
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }, 2000);
     });
-}
-
-// Функция создания нового отзыва с анимацией
-function createReview(name, review, rating) {
-    const reviewsContainer = document.querySelector('.reviews-container');
-    const reviewCard = document.createElement('article');
-    reviewCard.className = 'review-card';
-    
-    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-    const currentDate = new Date().toLocaleDateString('ru-RU');
-    
-    reviewCard.innerHTML = `
-        <div class="review-header">
-            <h3>${escapeHtml(name)}</h3>
-            <div class="stars" aria-label="Оценка: ${rating} из 5 звёзд">${stars}</div>
-        </div>
-        <p>"${escapeHtml(review)}"</p>
-        <time class="review-date" datetime="${new Date().toISOString().split('T')[0]}">${currentDate}</time>
-    `;
-    
-    // Добавляем анимацию появления
-    reviewCard.style.opacity = '0';
-    reviewCard.style.transform = 'translateY(20px)';
-    reviewsContainer.appendChild(reviewCard);
-    
-    // Анимация появления
-    setTimeout(() => {
-        reviewCard.style.transition = 'all 0.5s ease';
-        reviewCard.style.opacity = '1';
-        reviewCard.style.transform = 'translateY(0)';
-    }, 10);
-}
-
-// Экранирование HTML для безопасности
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 // Система уведомлений с улучшенным дизайном
@@ -265,19 +202,22 @@ function showNotification(message, type = 'info') {
         position: 'fixed',
         top: '20px',
         right: '20px',
-        background: type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#333333',
+        background: type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#d4af37',
         color: '#ffffff',
         padding: '1rem 1.5rem',
-        borderRadius: '0',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        borderRadius: '8px',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
         zIndex: '10000',
-        maxWidth: '300px',
-        fontSize: '0.9rem',
-        fontWeight: '400',
+        maxWidth: '400px',
+        fontSize: '0.95rem',
+        fontWeight: '500',
         transform: 'translateX(100%)',
         transition: 'transform 0.3s ease',
         wordWrap: 'break-word',
-        lineHeight: '1.4'
+        lineHeight: '1.4',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)'
     });
     
     document.body.appendChild(notification);
@@ -298,115 +238,8 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Touch события для мобильных устройств
-function initTouchEvents() {
-    if (!('ontouchstart' in window)) return;
-    
-    // Swipe для мобильного меню
-    let startX = 0;
-    let startY = 0;
-    
-    document.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-    });
-    
-    document.addEventListener('touchend', (e) => {
-        const endX = e.changedTouches[0].clientX;
-        const endY = e.changedTouches[0].clientY;
-        const diffX = startX - endX;
-        const diffY = startY - endY;
-        
-        // Swipe влево для закрытия меню
-        if (diffX > 50 && Math.abs(diffY) < 50 && navMenu.classList.contains('active')) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            hamburger.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-    });
-    
-    // Улучшенная прокрутка для touch устройств
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-        let startY = 0;
-        let startScrollTop = 0;
-        
-        section.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-            startScrollTop = window.pageYOffset;
-        });
-        
-        section.addEventListener('touchmove', (e) => {
-            const currentY = e.touches[0].clientY;
-            const diffY = startY - currentY;
-            
-            // Плавная прокрутка при touch
-            if (Math.abs(diffY) > 10) {
-                window.scrollTo(0, startScrollTop + diffY);
-            }
-        });
-    });
-}
-
-// Lazy loading для изображений
-function lazyLoadImages() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                    imageObserver.unobserve(img);
-                }
-            });
-        });
-        
-        images.forEach(img => imageObserver.observe(img));
-    } else {
-        // Fallback для старых браузеров
-        images.forEach(img => {
-            img.src = img.dataset.src;
-            img.classList.remove('lazy');
-        });
-    }
-}
-
-// Оптимизация производительности для мобильных устройств
-function optimizePerformance() {
-    if (isMobile) {
-        // Уменьшаем анимации на мобильных
-        document.documentElement.style.setProperty('--animation-duration', '0.2s');
-        
-        // Отключаем hover эффекты на touch устройствах
-        const style = document.createElement('style');
-        style.textContent = `
-            @media (hover: none) {
-                .menu-item:hover,
-                .event-card:hover,
-                .review-card:hover {
-                    transform: none !important;
-                    box-shadow: none !important;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-}
-
-// Адаптивные анимации
-function initAdaptiveAnimations() {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    if (prefersReducedMotion) {
-        document.documentElement.style.setProperty('--animation-duration', '0.01ms');
-        document.documentElement.style.setProperty('--transition-duration', '0.01ms');
-    }
-    
-    // Анимации появления элементов при скролле
+// Анимация появления элементов при скролле
+function initScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -422,33 +255,82 @@ function initAdaptiveAnimations() {
     }, observerOptions);
     
     // Наблюдаем за элементами для анимации
-    const animatedElements = document.querySelectorAll('.menu-item, .event-card, .review-card');
+    const animatedElements = document.querySelectorAll('.menu-item, .event-card, .gallery-item, .stat, .contact-item');
     animatedElements.forEach(el => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
         observer.observe(el);
     });
 }
 
-// Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    // Определяем тип устройства
-    detectDevice();
+// Параллакс эффект для hero секции
+function initParallax() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
     
-    // Инициализируем touch события
-    initTouchEvents();
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        if (hero.querySelector('.hero-background')) {
+            hero.querySelector('.hero-background').style.transform = `translateY(${rate}px)`;
+        }
+    });
+}
+
+// Анимация счетчиков в секции "О нас"
+function initCounters() {
+    const stats = document.querySelectorAll('.stat-number');
     
-    // Оптимизируем производительность
-    optimizePerformance();
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+    };
     
-    // Инициализируем адаптивные анимации
-    initAdaptiveAnimations();
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const finalValue = target.textContent;
+                const isPlus = finalValue.includes('+');
+                const numericValue = parseInt(finalValue.replace(/\D/g, ''));
+                
+                if (numericValue && !target.classList.contains('animated')) {
+                    target.classList.add('animated');
+                    animateCounter(target, 0, numericValue, isPlus);
+                }
+            }
+        });
+    }, observerOptions);
     
-    // Инициализируем lazy loading
-    lazyLoadImages();
+    stats.forEach(stat => observer.observe(stat));
+}
+
+function animateCounter(element, start, end, isPlus) {
+    const duration = 2000;
+    const startTime = performance.now();
     
-    // Добавляем активный класс для текущей секции в навигации
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Функция плавности
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + (end - start) * easeOutQuart);
+        
+        element.textContent = current + (isPlus ? '+' : '');
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+// Улучшенная навигация с активными ссылками
+function initActiveNavigation() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -484,6 +366,94 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Инициализируем активную ссылку
     updateActiveNavLink();
+}
+
+// Touch события для мобильных устройств
+function initTouchEvents() {
+    if (!('ontouchstart' in window)) return;
+    
+    // Swipe для мобильного меню
+    let startX = 0;
+    let startY = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const diffX = startX - endX;
+        const diffY = startY - endY;
+        
+        // Swipe влево для закрытия меню
+        if (diffX > 50 && Math.abs(diffY) < 50 && navMenu && navMenu.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+// Оптимизация производительности для мобильных устройств
+function optimizePerformance() {
+    if (isMobile) {
+        // Уменьшаем анимации на мобильных
+        document.documentElement.style.setProperty('--animation-duration', '0.2s');
+        
+        // Отключаем hover эффекты на touch устройствах
+        const style = document.createElement('style');
+        style.textContent = `
+            @media (hover: none) {
+                .menu-item:hover,
+                .event-card:hover,
+                .gallery-item:hover {
+                    transform: none !important;
+                    box-shadow: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Адаптивные анимации
+function initAdaptiveAnimations() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+        document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+        document.documentElement.style.setProperty('--transition-duration', '0.01ms');
+    }
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Определяем тип устройства
+    detectDevice();
+    
+    // Инициализируем touch события
+    initTouchEvents();
+    
+    // Оптимизируем производительность
+    optimizePerformance();
+    
+    // Инициализируем адаптивные анимации
+    initAdaptiveAnimations();
+    
+    // Инициализируем анимации при скролле
+    initScrollAnimations();
+    
+    // Инициализируем параллакс
+    initParallax();
+    
+    // Инициализируем счетчики
+    initCounters();
+    
+    // Инициализируем активную навигацию
+    initActiveNavigation();
     
     // Обработка изменения размера окна
     let resizeTimeout;
@@ -545,7 +515,6 @@ if ('serviceWorker' in navigator) {
 // Экспортируем функции для возможного использования в других модулях
 window.AppUtils = {
     showNotification,
-    createReview,
     detectDevice,
     isMobile
 };

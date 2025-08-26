@@ -1,16 +1,34 @@
 {
-    "name": "Старая Школа - Ресторан русской кухни",
+    "name": "Трактир Старая Школа",
     "short_name": "Старая Школа",
-    "description": "Ресторан русской кухни в центре Москвы с еженедельными мероприятиями",
+    "description": "Уютный трактир с атмосферой старой школы. Русская кухня, еженедельные мероприятия, живая музыка.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#333333",
+    "background_color": "#0a0a0a",
+    "theme_color": "#d4af37",
     "orientation": "portrait-primary",
-    "categories": ["food", "restaurant", "entertainment"],
+    "scope": "/",
     "lang": "ru",
-    "dir": "ltr",
+    "categories": ["food", "entertainment", "lifestyle"],
     "icons": [
+        {
+            "src": "/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
         {
             "src": "/android-chrome-192x192.png",
             "sizes": "192x192",
@@ -22,11 +40,6 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
-        },
-        {
-            "src": "/apple-touch-icon.png",
-            "sizes": "180x180",
-            "type": "image/png"
         }
     ],
     "screenshots": [
@@ -34,13 +47,58 @@
             "src": "/screenshot-wide.png",
             "sizes": "1280x720",
             "type": "image/png",
-            "form_factor": "wide"
+            "form_factor": "wide",
+            "label": "Главная страница трактира"
         },
         {
             "src": "/screenshot-narrow.png",
             "sizes": "750x1334",
             "type": "image/png",
-            "form_factor": "narrow"
+            "form_factor": "narrow",
+            "label": "Мобильная версия сайта"
         }
-    ]
+    ],
+    "shortcuts": [
+        {
+            "name": "Меню",
+            "short_name": "Меню",
+            "description": "Посмотреть меню трактира",
+            "url": "/#menu",
+            "icons": [
+                {
+                    "src": "/icon-menu.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Бронирование",
+            "short_name": "Забронировать",
+            "description": "Забронировать столик",
+            "url": "/#reservation",
+            "icons": [
+                {
+                    "src": "/icon-reservation.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Контакты",
+            "short_name": "Контакты",
+            "description": "Как нас найти",
+            "url": "/#contact",
+            "icons": [
+                {
+                    "src": "/icon-contact.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "edge_side_panel": {
+        "preferred_width": 400
+    }
 }
