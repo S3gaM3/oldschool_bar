@@ -44,11 +44,12 @@
     <link rel="canonical" href="https://staraya-shkola.ru">
     
     <!-- Favicon и иконки -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <!-- Webmanifest только для HTTP/HTTPS -->
+    <link rel="manifest" href="site.webmanifest" crossorigin="use-credentials">
     
     <!-- Preconnect для внешних ресурсов -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,6 +58,9 @@
     <!-- Стили -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Яндекс.Карты -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=6bb39e64-47ab-4048-bb6a-33c0a18c4d07&lang=ru_RU" type="text/javascript"></script>
     
     <!-- Структурированные данные JSON-LD -->
     <script type="application/ld+json">
@@ -127,7 +131,7 @@
         </div>
         <div class="hero-content">
             <div class="hero-logo">
-                <img src="logo.jpg" alt="Логотип Трактир Старая Школа" class="hero-logo-img">
+                <img src="assets/images/logo.jpg" alt="Логотип Трактир Старая Школа" class="hero-logo-img">
             </div>
             <div class="hero-badge">
                 <span>С 2018 года</span>
@@ -193,7 +197,7 @@
                     <a href="#menu" class="btn btn-outline">Узнать больше</a>
                 </div>
                 <div class="about-image">
-                    <img src="main_bar.webp" alt="Фото трактира Старая Школа" class="about-img">
+                    <img src="assets/images/main_bar.webp" alt="Фото трактира Старая Школа" class="about-img">
                 </div>
             </div>
         </div>
@@ -409,16 +413,16 @@
             </div>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="interier.webp" alt="Интерьер трактира Старая Школа" class="gallery-img">
+                    <img src="assets/images/interier.webp" alt="Интерьер трактира Старая Школа" class="gallery-img">
                 </div>
                 <div class="gallery-item">
-                    <img src="food.webp" alt="Блюда трактира Старая Школа" class="gallery-img">
+                    <img src="assets/images/food.webp" alt="Блюда трактира Старая Школа" class="gallery-img">
                 </div>
                 <div class="gallery-item">
-                    <img src="mafia.webp" alt="Мероприятия в трактире Старая Школа" class="gallery-img">
+                    <img src="assets/images/mafia.webp" alt="Мероприятия в трактире Старая Школа" class="gallery-img">
                 </div>
                 <div class="gallery-item">
-                    <img src="atmosphera.webp" alt="Атмосфера трактира Старая Школа" class="gallery-img">
+                    <img src="assets/images/atmosphera.webp" alt="Атмосфера трактира Старая Школа" class="gallery-img">
                 </div>
             </div>
         </div>
@@ -480,59 +484,30 @@
                 <h2 class="section-title">Контакты</h2>
                 <p class="section-subtitle">Как нас найти и связаться с нами</p>
             </div>
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="contact-icon">📍</div>
-                        <div class="contact-details">
-                            <h3>Адрес</h3>
+           
+            
+            <div class="map-section">
+                <div id="yandex-map"></div>
+                <div class="transport-info">
+                    <div class="transport-item">
+                        <span class="transport-icon">📍</span>
+                        <div>
+                            <strong>Адрес:</strong>
                             <p>Тихвинская ул., 3, корп. 1<br>Москва, 127055</p>
                         </div>
                     </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">📞</div>
-                        <div class="contact-details">
-                            <h3>Телефон</h3>
+                    <div class="transport-item">
+                        <span class="transport-icon">📞</span>
+                        <div>
+                            <strong>Телефон:</strong>
                             <p><a href="tel:+79998778788">+7 (999) 877-87-88</a></p>
                         </div>
                     </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">🕐</div>
-                        <div class="contact-details">
-                            <h3>Режим работы</h3>
+                    <div class="transport-item">
+                        <span class="transport-icon">🕐</span>
+                        <div>
+                            <strong>Режим работы:</strong>
                             <p>Ежедневно: 12:00 - 01:00</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">💰</div>
-                        <div class="contact-details">
-                            <h3>Средний счёт</h3>
-                            <p>1600 ₽</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="map-container">
-                    <div class="map-placeholder">
-                        <h3>Как добраться</h3>
-                        <div class="transport-info">
-                            <div class="transport-item">
-                                <span class="transport-icon">🚇</span>
-                                <div>
-                                    <strong>Метро:</strong>
-                                    <p>Менделеевская (640 м)</p>
-                                    <p>Новослободская (840 м)</p>
-                                    <p>Достоевская (1,12 км)</p>
-                                </div>
-                            </div>
-                            <div class="transport-item">
-                                <span class="transport-icon">🚌</span>
-                                <div>
-                                    <strong>Автобусы:</strong>
-                                    <p>Улица Палиха (171 м)</p>
-                                    <p>Тихвинский переулок (270 м)</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

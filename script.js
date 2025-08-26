@@ -429,6 +429,164 @@ function initAdaptiveAnimations() {
     }
 }
 
+// Инициализация карты
+function initMapWhenReady() {
+    // Проверяем, загружен ли API Яндекс.Карт
+    if (typeof ymaps !== 'undefined') {
+        console.log('API Яндекс.Карт загружен, инициализируем карту...');
+        // Используем ymaps.ready для надежной инициализации
+        ymaps.ready(function() {
+            console.log('API Яндекс.Карт готов, инициализируем карту...');
+            initYandexMap();
+        });
+    } else {
+        console.log('API Яндекс.Карт еще не загружен, ждем...');
+        // Если API еще не загружен, ждем
+        setTimeout(initMapWhenReady, 500);
+    }
+}
+
+// Альтернативный способ инициализации через событие загрузки API
+function initYandexMapAlternative() {
+    // Ждем загрузки API
+    ymaps.ready(function() {
+        console.log('API Яндекс.Карт готов, инициализируем карту...');
+        initYandexMap();
+    });
+}
+
+// Инициализация Яндекс.Карт
+function initYandexMap() {
+    try {
+        console.log('Начинаем инициализацию карты...');
+        
+        // Проверяем, существует ли элемент для карты
+        const mapElement = document.getElementById('yandex-map');
+        if (!mapElement) {
+            console.error('Элемент yandex-map не найден!');
+            return;
+        }
+        
+        // Проверяем, что API полностью загружен
+        if (typeof ymaps === 'undefined' || !ymaps.Map) {
+            console.error('API Яндекс.Карт не полностью загружен!');
+            return;
+        }
+        
+        console.log('API Яндекс.Карт готов, создаем карту...');
+        
+        // Координаты трактира "Старая Школа" (Тихвинская ул., 3, корп. 1, Москва)
+        const traktirCoords = [55.785994, 37.600909];
+        
+        console.log('Создаем карту с координатами:', traktirCoords);
+        
+        // Создаем карту с дополнительными параметрами
+        const map = new ymaps.Map('yandex-map', {
+            center: traktirCoords,
+            zoom: 16,
+            controls: ['zoomControl', 'fullscreenControl'],
+            behaviors: ['drag', 'scrollZoom', 'dblClickZoom'],
+            type: 'yandex#map'
+        });
+
+        // Ждем загрузки карты
+        map.events.add('load', function() {
+            console.log('Карта загружена, добавляем метку...');
+            
+            // Создаем метку трактира
+            const placemark = new ymaps.Placemark(traktirCoords, {
+                balloonContentHeader: 'Трактир Старая Школа',
+                balloonContentBody: `
+                    <div style="padding: 10px;">
+                        <h4 style="margin: 0 0 10px 0; color: #d4af37;">Трактир Старая Школа</h4>
+                        <p style="margin: 5px 0;"><strong>Адрес:</strong> Тихвинская ул., 3, корп. 1</p>
+                        <p style="margin: 5px 0;"><strong>Телефон:</strong> +7 (999) 877-87-88</p>
+                        <p style="margin: 5px 0;"><strong>Режим работы:</strong> 12:00 - 01:00</p>
+                        <p style="margin: 5px 0;"><strong>Метро:</strong> Менделеевская (640 м)</p>
+                    </div>
+                `,
+                hintContent: 'Трактир Старая Школа'
+            }, {
+                // Настройки метки - используем стандартную метку для надежности
+                preset: 'islands#redDotIcon',
+                iconColor: '#d4af37'
+            });
+
+            // Добавляем метку на карту
+            map.geoObjects.add(placemark);
+            
+            // Центрируем карту на метке
+            map.setCenter(traktirCoords, 16);
+            
+            console.log('Метка трактира добавлена на координаты:', traktirCoords);
+
+            // Добавляем кнопку "Построить маршрут"
+            const routeButton = new ymaps.control.Button({
+                data: {
+                    content: 'Построить маршрут'
+                },
+                options: {
+                    selectOnClick: false
+                }
+            });
+
+            routeButton.events.add('click', function() {
+                // Открываем Яндекс.Навигатор с координатами трактира
+                const url = `https://yandex.ru/maps/?rtext=~${traktirCoords[0]},${traktirCoords[1]}&rtt=auto`;
+                window.open(url, '_blank');
+            });
+
+            map.controls.add(routeButton, {
+                float: 'right',
+                floatIndex: 0
+            });
+
+            // Адаптивность карты
+            map.container.fitToViewport();
+            
+            // Обработка изменения размера окна
+            window.addEventListener('resize', () => {
+                map.container.fitToViewport();
+            });
+
+            console.log('Яндекс.Карта успешно инициализирована с интерактивностью!');
+            
+            // Тестируем интерактивность
+            console.log('Тестируем интерактивность карты...');
+            console.log('Карта должна реагировать на клики, зум и перетаскивание');
+            
+            // Добавляем тестовые события для проверки интерактивности
+            map.events.add('click', function(e) {
+                console.log('Клик по карте:', e.get('coords'));
+            });
+            
+            map.events.add('boundschange', function(e) {
+                console.log('Изменение границ карты:', e.get('newBounds'));
+            });
+            
+            // Проверяем, что карта действительно интерактивна
+            setTimeout(() => {
+                console.log('Проверяем интерактивность карты...');
+                console.log('Состояние карты:', map.getState());
+                console.log('Элемент карты:', document.getElementById('yandex-map'));
+                console.log('Canvas элементы:', document.querySelectorAll('#yandex-map canvas'));
+            }, 2000);
+            
+        });
+
+        // Обработка ошибок загрузки карты
+        map.events.add('error', function(e) {
+            console.error('Ошибка загрузки карты:', e);
+        });
+
+        // Проверяем состояние карты
+        console.log('Состояние карты:', map.getState());
+        
+    } catch (error) {
+        console.error('Ошибка при инициализации карты:', error);
+    }
+}
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     // Определяем тип устройства
@@ -454,6 +612,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Инициализируем активную навигацию
     initActiveNavigation();
+    
+    // Инициализируем карту
+    initMapWhenReady();
     
     // Обработка изменения размера окна
     let resizeTimeout;
@@ -502,13 +663,18 @@ window.addEventListener('unhandledrejection', function(e) {
 // Service Worker для PWA (если поддерживается)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
+        // Проверяем, что мы не в локальном режиме
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('SW registered: ', registration);
+                })
+                .catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+        } else {
+            console.log('ServiceWorker не регистрируется в локальном режиме (file://)');
+        }
     });
 }
 
