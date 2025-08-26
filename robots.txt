@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Запрещаем индексацию служебных файлов
+Disallow: /styles.css
+Disallow: /script.js
+Disallow: /README.md
+
+# Разрешаем индексацию главной страницы
+Allow: /index.html
+Allow: /
+
+# Указываем расположение sitemap
+Sitemap: https://staraya-shkola.ru/sitemap.xml
+
+# Время задержки между запросами (в секундах)
+Crawl-delay: 1
