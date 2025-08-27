@@ -567,6 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализируем карту
     initMapWhenReady();
     
+    // Инициализируем форму бронирования
+    initReservationForm();
+    
     // Обработка изменения размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -629,9 +632,155 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// Функция инициализации формы бронирования
+function initReservationForm() {
+    const form = document.getElementById('reservationForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Получаем данные формы
+        const formData = new FormData(form);
+        
+        // Показываем индикатор загрузки
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Отправляем...';
+        submitBtn.disabled = true;
+        
+        try {
+            // Отправляем данные на сервер
+            const response = await fetch('process_booking.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Показываем сообщение об успехе
+                showNotification(result.message, 'success');
+                
+                // Очищаем форму
+                form.reset();
+                
+                // Прокручиваем к началу формы для показа сообщения
+                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // Показываем ошибку
+                showNotification(result.message || 'Произошла ошибка при бронировании', 'error');
+            }
+        } catch (error) {
+            console.error('Ошибка отправки формы:', error);
+            showNotification('Произошла ошибка при отправке. Попробуйте еще раз.', 'error');
+        } finally {
+            // Восстанавливаем кнопку
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+    
+    // Валидация в реальном времени
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+        
+        input.addEventListener('input', function() {
+            clearFieldError(this);
+        });
+    });
+}
+
+// Функция валидации поля
+function validateField(field) {
+    const value = field.value.trim();
+    const fieldName = field.name;
+    
+    clearFieldError(field);
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    switch (fieldName) {
+        case 'name':
+            if (value.length < 2) {
+                isValid = false;
+                errorMessage = 'Имя должно содержать минимум 2 символа';
+            }
+            break;
+            
+        case 'phone':
+            const phoneRegex = /^(\+7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/;
+            if (!phoneRegex.test(value)) {
+                isValid = false;
+                errorMessage = 'Введите корректный номер телефона';
+            }
+            break;
+            
+        case 'date':
+            const selectedDate = new Date(value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                isValid = false;
+                errorMessage = 'Дата не может быть в прошлом';
+            }
+            break;
+            
+        case 'time':
+            if (!value) {
+                isValid = false;
+                errorMessage = 'Выберите время';
+            }
+            break;
+            
+        case 'guests':
+            if (!value) {
+                isValid = false;
+                errorMessage = 'Выберите количество гостей';
+            }
+            break;
+    }
+    
+    if (!isValid) {
+        showFieldError(field, errorMessage);
+    }
+    
+    return isValid;
+}
+
+// Функция показа ошибки поля
+function showFieldError(field, message) {
+    clearFieldError(field);
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error';
+    errorDiv.textContent = message;
+    errorDiv.style.color = '#dc3545';
+    errorDiv.style.fontSize = '0.875rem';
+    errorDiv.style.marginTop = '0.25rem';
+    
+    field.parentNode.appendChild(errorDiv);
+    field.classList.add('error');
+}
+
+// Функция очистки ошибки поля
+function clearFieldError(field) {
+    const errorDiv = field.parentNode.querySelector('.field-error');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+    field.classList.remove('error');
+}
+
 // Экспортируем функции для возможного использования в других модулях
 window.AppUtils = {
     showNotification,
     detectDevice,
-    isMobile
+    isMobile,
+    initReservationForm
 };
