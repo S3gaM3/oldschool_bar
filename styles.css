@@ -1040,6 +1040,11 @@ section {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Скрытые элементы */
+.hidden {
+    display: none;
+}
+
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: var(--text-muted);

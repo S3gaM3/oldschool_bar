@@ -637,50 +637,13 @@ function initReservationForm() {
     const form = document.getElementById('reservationForm');
     if (!form) return;
 
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Получаем данные формы
-        const formData = new FormData(form);
-        
-        // Показываем индикатор загрузки
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Отправляем...';
-        submitBtn.disabled = true;
-        
-        try {
-            // Отправляем данные на сервер
-            const response = await fetch('process_booking.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Показываем сообщение об успехе
-                showNotification(result.message, 'success');
-                
-                // Очищаем форму
-                form.reset();
-                
-                // Прокручиваем к началу формы для показа сообщения
-                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                // Показываем ошибку
-                showNotification(result.message || 'Произошла ошибка при бронировании', 'error');
-            }
-        } catch (error) {
-            console.error('Ошибка отправки формы:', error);
-            showNotification('Произошла ошибка при отправке. Попробуйте еще раз.', 'error');
-        } finally {
-            // Восстанавливаем кнопку
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
-    });
-    
+    // Конфигурация Telegram бота
+    const TELEGRAM_BOT_TOKEN = '8275768497:AAFRLQcK7PJseN3YYJEtW5Afk5LuupJxjWc';
+    const TELEGRAM_CHAT_ID = '873320985';
+
+    // Показываем уведомление о том, что форма работает
+    console.log('Форма бронирования инициализирована для прямой отправки в Telegram');
+
     // Валидация в реальном времени
     const inputs = form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
@@ -691,6 +654,81 @@ function initReservationForm() {
         input.addEventListener('input', function() {
             clearFieldError(this);
         });
+    });
+
+    // Обработка отправки формы
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Показываем индикатор загрузки
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Отправляем...';
+        submitBtn.disabled = true;
+
+        try {
+            // Получаем данные формы
+            const formData = new FormData(form);
+            const bookingData = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                date: formData.get('date'),
+                time: formData.get('time'),
+                guests: formData.get('guests'),
+                message: formData.get('message') || 'Нет дополнительной информации'
+            };
+
+            // Формируем сообщение для Telegram
+            const telegramMessage = `🆕 *НОВОЕ БРОНИРОВАНИЕ!*
+
+👤 *Имя:* ${bookingData.name}
+📞 *Телефон:* ${bookingData.phone}
+📅 *Дата:* ${bookingData.date}
+🕐 *Время:* ${bookingData.time}
+👥 *Гостей:* ${bookingData.guests}
+💬 *Дополнительно:* ${bookingData.message}
+
+⏰ *Получено:* ${new Date().toLocaleString('ru-RU')}
+🔗 *Источник:* Сайт`;
+
+            // Отправляем в Telegram
+            const telegramResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: telegramMessage,
+                    parse_mode: 'Markdown'
+                })
+            });
+
+            if (telegramResponse.ok) {
+                const result = await telegramResponse.json();
+                if (result.ok) {
+                    // Показываем сообщение об успехе
+                    showNotification('Столик успешно забронирован! Мы свяжемся с вами для подтверждения.', 'success');
+                    
+                    // Очищаем форму
+                    form.reset();
+                    
+                    // Прокручиваем к началу формы для показа сообщения
+                    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    throw new Error('Ошибка отправки в Telegram: ' + result.description);
+                }
+            } else {
+                throw new Error('Ошибка отправки в Telegram');
+            }
+        } catch (error) {
+            console.error('Ошибка отправки формы:', error);
+            showNotification('Произошла ошибка при отправке. Попробуйте еще раз.', 'error');
+        } finally {
+            // Восстанавливаем кнопку
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
     });
 }
 
