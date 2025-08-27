@@ -45,6 +45,7 @@ oldschool_bar/
 ├── styles.css        # Стили
 ├── script.js         # JavaScript логика
 ├── TELEGRAM_DIRECT_SETUP.md # Инструкция по настройке Telegram
+├── BOT_SETUP.md # Настройка команд бота
 └── README.md         # Этот файл
 ```
 

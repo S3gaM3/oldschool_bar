@@ -5,6 +5,76 @@ let touchStartY = 0;
 let touchEndX = 0;
 let touchEndY = 0;
 
+// Конфигурация Telegram бота
+const TELEGRAM_BOT_TOKEN = '8275768497:AAFRLQcK7PJseN3YYJEtW5Afk5LuupJxjWc';
+const TELEGRAM_CHAT_ID = '873320985';
+
+// Функции для Telegram бота
+async function sendTelegramMessage(message, parseMode = 'Markdown') {
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: parseMode
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            return result.ok;
+        }
+        return false;
+    } catch (error) {
+        console.error('Ошибка отправки в Telegram:', error);
+        return false;
+    }
+}
+
+// Функция для обработки команд бота (отключена)
+// Бот работает только для уведомлений о бронированиях
+function handleBotCommand(command) {
+    return `🤖 *Трактир "Старая Школа" - Бот*
+
+Этот бот автоматически уведомляет персонал о новых бронированиях.
+
+💬 *Для получения информации:*
+• Сайт: oldschooldrinks.ru
+• Телефон: +7 (999) 877-87-88
+
+🍺 *Добро пожаловать в трактир!*`;
+}
+
+// Функция для настройки webhook (если понадобится)
+async function setWebhook() {
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                url: 'https://your-domain.com/webhook', // Замените на ваш домен
+                allowed_updates: ['message', 'callback_query']
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Webhook установлен:', result);
+            return result.ok;
+        }
+        return false;
+    } catch (error) {
+        console.error('Ошибка установки webhook:', error);
+        return false;
+    }
+}
+
 // Определение типа устройства
 function detectDevice() {
     isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
@@ -637,10 +707,6 @@ function initReservationForm() {
     const form = document.getElementById('reservationForm');
     if (!form) return;
 
-    // Конфигурация Telegram бота
-    const TELEGRAM_BOT_TOKEN = '8275768497:AAFRLQcK7PJseN3YYJEtW5Afk5LuupJxjWc';
-    const TELEGRAM_CHAT_ID = '873320985';
-
     // Показываем уведомление о том, что форма работает
     console.log('Форма бронирования инициализирована для прямой отправки в Telegram');
 
@@ -692,32 +758,17 @@ function initReservationForm() {
 🔗 *Источник:* Сайт`;
 
             // Отправляем в Telegram
-            const telegramResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: telegramMessage,
-                    parse_mode: 'Markdown'
-                })
-            });
+            const telegramResponse = await sendTelegramMessage(telegramMessage);
 
-            if (telegramResponse.ok) {
-                const result = await telegramResponse.json();
-                if (result.ok) {
-                    // Показываем сообщение об успехе
-                    showNotification('Столик успешно забронирован! Мы свяжемся с вами для подтверждения.', 'success');
-                    
-                    // Очищаем форму
-                    form.reset();
-                    
-                    // Прокручиваем к началу формы для показа сообщения
-                    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    throw new Error('Ошибка отправки в Telegram: ' + result.description);
-                }
+            if (telegramResponse) {
+                // Показываем сообщение об успехе
+                showNotification('Столик успешно забронирован! Мы свяжемся с вами для подтверждения.', 'success');
+                
+                // Очищаем форму
+                form.reset();
+                
+                // Прокручиваем к началу формы для показа сообщения
+                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
                 throw new Error('Ошибка отправки в Telegram');
             }
